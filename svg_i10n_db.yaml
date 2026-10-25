@@ -1,0 +1,57 @@
+---
+# 1. Database Credentials Secret
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mariadb-secret
+type: Opaque
+stringData:
+  mariadb-root-password: "Test12"
+  mariadb-database: "time_calculator"
+
+---
+# 2. JavaFX App Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: javafx-travel-app-i10n
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: javafx-travel-app-i10n
+  template:
+    metadata:
+      labels:
+        app: javafx-travel-app-i10n
+    spec:
+      containers:
+        - name: javafx-app
+          image: amirdirin/svg-2012-i10n_db:latest
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: DB_HOST
+              value: "host.minikube.internal"
+            - name: DB_PORT
+              value: "3306"
+            - name: DB_NAME
+              value: "time_calculator"
+            - name: DB_USER
+              value: "root"
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mariadb-secret
+                  key: mariadb-root-password
+            - name: DISPLAY
+              value: "host.minikube.internal:0.0"
+# Instructions to run the container inside Minikube:
+# 1. Start Minikube with the following command:
+#    minikube start --driver=docker
+# 2. Use minikube's Docker daemon to build the Docker image:
+ #    minikube image build -t amirdirin/svg-2012-i10n_db:latest .
+# 3. Apply the Kubernetes manifests:
+#    kubectl apply -f svg_i10n_db.yaml
+#4.# 1. Direct your local Docker CLI to Minikube's daemon
+#& minikube -p minikube docker-env --shell powershell | Invoke-Expression
+
