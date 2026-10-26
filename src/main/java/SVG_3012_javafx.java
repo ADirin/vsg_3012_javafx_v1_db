@@ -33,6 +33,7 @@ public class SVG_3012_javafx extends Application {
 
         calcButton.setOnAction(e -> calculate());
 
+        // Construct the UI layout
         VBox root = new VBox(10,
                 new Label("Language:"), langBox,
                 distanceLabel, distanceField,

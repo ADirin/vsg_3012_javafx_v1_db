@@ -4,6 +4,8 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: mariadb-secret
+
+#default secret for database credentials
 type: Opaque
 stringData:
   mariadb-root-password: "Test12"
@@ -13,11 +15,15 @@ stringData:
 # 2. JavaFX App Deployment
 apiVersion: apps/v1
 kind: Deployment
+# javafx-travel-app-i10n-rtl is a Unique identifier for the deployment, used for managing the deployment lifecycle
 metadata:
   name: javafx-travel-app-i10n-rtl
 spec:
+# Only one replica of the application will be running at any given time,
+#ensuring that the application is always available and can handle requests.
   replicas: 1
   selector:
+ # The selector defines how the deployment finds which pods to manage. It matches pods with the label "app: javafx-travel-app-i10n-rtl".
     matchLabels:
       app: javafx-travel-app-i10n-rtl
   template:

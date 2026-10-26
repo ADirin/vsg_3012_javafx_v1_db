@@ -14,6 +14,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -98,27 +99,33 @@ public class SVG_3012_javafx_V3_RtL extends Application {
 
     private void calculate() {
         try {
+            // 1. Parse and sanitize user inputs
             double distance = Double.parseDouble(distanceField.getText().trim().replace(',', '.'));
             double speed = Double.parseDouble(speedField.getText().trim().replace(',', '.'));
-            double time = calTime(distance, speed);
-            resultLabel.setText(rs.getString("time") + " " + time);
-            messageLabel.setText(rs.getString("message"));
 
-            if (distance >= 0 && speed > 0) {
-                saveToDatabase(distance, speed, time, currentLang);
-                dbLabel.setText("Saved to database.");
-            } else {
-                dbLabel.setText("Not saved: distance must be >= 0 and speed > 0.");
+            // 2. Validate input to avoid division by zero or negative values
+            if (speed <= 0 || distance < 0) {
+                messageLabel.setText(rs.getString("error.invalidInput"));
+                return;
             }
-        } catch (NumberFormatException ex) {
-            resultLabel.setText("Invalid number");
-            messageLabel.setText("");
-            dbLabel.setText("");
-        } catch (SQLException ex) {
-            dbLabel.setText("Database error: " + ex.getMessage());
+
+            // 3. Compute time
+            double time = calTime(distance, speed);
+
+            // 4. ADD YOUR CODE HERE: Retrieve, format, and display the localized result
+            String pattern = rs.getString("calc.result");
+            String formattedMessage = MessageFormat.format(pattern, distance, speed, time);
+            resultLabel.setText(formattedMessage);
+
+            // 5. Update message label if applicable
+            if (rs.containsKey("message")) {
+                messageLabel.setText(rs.getString("message"));
+            }
+
+        } catch (NumberFormatException e) {
+            messageLabel.setText(rs.getString("error.invalidInput"));
         }
     }
-
     private static void saveToDatabase(double distance, double speed, double time, String lang)
             throws SQLException {
         String sql = "INSERT INTO calculation (distance, speed, time_hours, language) VALUES (?, ?, ?, ?)";
