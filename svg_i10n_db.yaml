@@ -48,10 +48,11 @@ spec:
 # Instructions to run the container inside Minikube:
 # 1. Start Minikube with the following command:
 #    minikube start --driver=docker
-# 2. Use minikube's Docker daemon to build the Docker image:
+# 2. Run the xming server on your host machine to enable GUI support for the JavaFX application. You can use Xming or any other X server of your choice.
+# 3. Use minikube's Docker daemon to build the Docker image:
  #    minikube image build -t amirdirin/svg-2012-i10n_db:latest .
-# 3. Apply the Kubernetes manifests:
+# 4. Apply the Kubernetes manifests:
 #    kubectl apply -f svg_i10n_db.yaml
-#4.# 1. Direct your local Docker CLI to Minikube's daemon
+#5.# 1. Direct your local Docker CLI to Minikube's daemon
 #& minikube -p minikube docker-env --shell powershell | Invoke-Expression
 

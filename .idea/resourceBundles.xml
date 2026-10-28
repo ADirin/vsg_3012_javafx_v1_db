@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ResourceBundleManager">
+    <file url="file://$PROJECT_DIR$/src/main/resources/Messa.properties" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/Messa_fa_IR.properties" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/Messa_fi_FI.properties" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/Messa_ja_JP.properties" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/Messa_sv_SE.properties" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/Messages_.properties" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/Messages__fa_IR.properties" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/Messages__fi_FI.properties" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/Messages__ja_JP.properties" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/Messages__sv_SE.properties" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/Messages_bun.properties" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/Messages_bun_fa_IR.properties" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/Messages_bun_fi_FI.properties" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/Messages_bun_ja_JP.properties" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/Messages_bun_sv_SE.properties" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/Messages_bundle.properties" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/Messages_bundle_fa_IR.properties" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/Messages_bundle_fi_FI.properties" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/Messages_bundle_ja_JP.properties" />
+    <file url="file://$PROJECT_DIR$/src/main/resources/Messages_bundle_sv_SE.properties" />
+    <custom-resource-bundle>
+      <file value="file://$PROJECT_DIR$/src/main/resources/Messages_bun.properties" />
+      <file value="file://$PROJECT_DIR$/src/main/resources/Messages_bun_fa_IR.properties" />
+      <file value="file://$PROJECT_DIR$/src/main/resources/Messages_bun_fi_FI.properties" />
+      <file value="file://$PROJECT_DIR$/src/main/resources/Messages_bun_ja_JP.properties" />
+      <file value="file://$PROJECT_DIR$/src/main/resources/Messages_bun_sv_SE.properties" />
+      <base-name>Messages_bun</base-name>
+    </custom-resource-bundle>
+    <custom-resource-bundle>
+      <file value="file://$PROJECT_DIR$/src/main/resources/Messages_.properties" />
+      <file value="file://$PROJECT_DIR$/src/main/resources/Messages__fa_IR.properties" />
+      <file value="file://$PROJECT_DIR$/src/main/resources/Messages__fi_FI.properties" />
+      <file value="file://$PROJECT_DIR$/src/main/resources/Messages__ja_JP.properties" />
+      <file value="file://$PROJECT_DIR$/src/main/resources/Messages__sv_SE.properties" />
+      <file value="file://$PROJECT_DIR$/src/main/resources/Messages_bun_ar.properties" />
+      <base-name>Messages_</base-name>
+    </custom-resource-bundle>
+    <custom-resource-bundle>
+      <file value="file://$PROJECT_DIR$/src/main/resources/Messa.properties" />
+      <file value="file://$PROJECT_DIR$/src/main/resources/Messa_fa_IR.properties" />
+      <file value="file://$PROJECT_DIR$/src/main/resources/Messa_fi_FI.properties" />
+      <file value="file://$PROJECT_DIR$/src/main/resources/Messa_ja_JP.properties" />
+      <file value="file://$PROJECT_DIR$/src/main/resources/Messa_sv_SE.properties" />
+      <file value="file://$PROJECT_DIR$/src/main/resources/Messages_ar.properties" />
+      <base-name>Messa</base-name>
+    </custom-resource-bundle>
+    <custom-resource-bundle>
+      <file value="file://$PROJECT_DIR$/src/main/resources/Messages_bundle.properties" />
+      <file value="file://$PROJECT_DIR$/src/main/resources/Messages_bundle_ar.properties" />
+      <file value="file://$PROJECT_DIR$/src/main/resources/Messages_bundle_fa_IR.properties" />
+      <file value="file://$PROJECT_DIR$/src/main/resources/Messages_bundle_fi_FI.properties" />
+      <file value="file://$PROJECT_DIR$/src/main/resources/Messages_bundle_ja_JP.properties" />
+      <file value="file://$PROJECT_DIR$/src/main/resources/Messages_bundle_sv_SE.properties" />
+      <base-name>Messages_bundle</base-name>
+    </custom-resource-bundle>
+  </component>
+</project>

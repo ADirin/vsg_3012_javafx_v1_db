@@ -19,9 +19,10 @@ import java.util.ResourceBundle;
 public class SVG_3012_javafx_V2 extends Application {
 
     // Change these to match your HeidiSQL / MariaDB connection in Windows
-    //private static final String DB_URL = "jdbc:mariadb://localhost:3306/time_calculator";
+     private static final String DB_URL = "jdbc:mariadb://localhost:3306/time_calculator";
     // Using the dockerized MariaDB
-    private static final String DB_URL ="jdbc:mariadb://host.docker.internal:3306/time_calculator?useSSL=false&allowPublicKeyRetrieval=true";
+
+    //private static final String DB_URL ="jdbc:mariadb://host.docker.internal:3306/time_calculator?useSSL=false&allowPublicKeyRetrieval=true";
     private static final String DB_USER = "root";
     private static final String DB_PASSWORD = "Test12";
 
