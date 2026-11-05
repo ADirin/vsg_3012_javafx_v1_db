@@ -30,9 +30,9 @@ import java.util.function.UnaryOperator;
  */
 public class SVG_3012_javafx_V5_Rtl extends Application {
 
-    /** Language choice: label shown in the box, locale tag, text direction. */
+    /** Language choice: label shown in the combo box, locale tag fi-FI, text direction. */
     private record Lang(String label, String tag, boolean rtl) {
-        String code() { return tag.substring(0, 2); }          // value stored in unit_translation.lang
+        String code() { return tag.substring(0, 2); } // value stored in unit_translation.lang
         Locale locale() { return code().equals("en") ? Locale.ROOT : Locale.forLanguageTag(tag); }
         boolean isFarsi() { return code().equals("fa"); }
         boolean isArabic() { return code().equals("ar"); }
@@ -54,7 +54,8 @@ public class SVG_3012_javafx_V5_Rtl extends Application {
 
     private ResourceBundle rs;
     private Lang currentLang = LANGUAGES.get(0);
-    private Map<String, UnitDao.Unit> units = Map.of();
+    private Map<String, UnitDao.Unit> units = Map.of(); // to cache unit names and descriptions from the database for the current language
+
 
     private VBox root;
 
@@ -72,6 +73,7 @@ public class SVG_3012_javafx_V5_Rtl extends Application {
     // ---------------------------------------------------------------- digits
 
     /** Converts Persian (۰-۹) and Arabic-Indic (٠-٩) digits and their separators to plain ASCII. */
+    // check what the user typed, normalize to ASCII for parsing and database storage
     static String normalizeDigits(String s) {
         StringBuilder sb = new StringBuilder(s.length());
         for (char c : s.toCharArray()) {
@@ -94,6 +96,7 @@ public class SVG_3012_javafx_V5_Rtl extends Application {
      * Converts ASCII digits and the decimal point to the digits of the given script:
      * Persian (۰-۹) when persian is true, Arabic-Indic (٠-٩) otherwise. Decimal separator is ٫ in both.
      */
+    // displays numbers in the digit script of the current language, for example Persian digits for Farsi
     static String toLocalDigits(String s, boolean persian) {
         char zero = persian ? '۰' : '٠';
         StringBuilder sb = new StringBuilder(s.length());

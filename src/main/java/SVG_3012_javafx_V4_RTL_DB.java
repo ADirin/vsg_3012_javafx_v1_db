@@ -7,6 +7,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -17,11 +18,15 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.function.UnaryOperator;
 
 /**
  * Time Calculator with two localization layers:
  *  - UI labels and messages: ResourceBundle (Messages_bundle_xx.properties, UTF-8)
  *  - Unit names and descriptions: database, translation-table approach (see init.sql and UnitDao)
+ *
+ * Numeric input accepts Latin (0-9), Persian (۰-۹) and Arabic-Indic (٠-٩) digits.
+ * In right-to-left languages the text fields are right-to-left too.
  */
 public class SVG_3012_javafx_V4_RTL_DB extends Application {
 
@@ -29,6 +34,9 @@ public class SVG_3012_javafx_V4_RTL_DB extends Application {
     private record Lang(String label, String tag, boolean rtl) {
         String code() { return tag.substring(0, 2); }          // value stored in unit_translation.lang
         Locale locale() { return code().equals("en") ? Locale.ROOT : Locale.forLanguageTag(tag); }
+        boolean isFarsi() { return code().equals("fa"); }
+        boolean isArabic() { return code().equals("ar"); }
+        boolean usesLocalDigits() { return isFarsi() || isArabic(); }
         @Override public String toString() { return label; }
     }
 
@@ -61,12 +69,85 @@ public class SVG_3012_javafx_V4_RTL_DB extends Application {
     private final TextField speedField = new TextField();
     private final Button calcButton = new Button();
 
+    // ---------------------------------------------------------------- digits
+
+    /** Converts Persian (۰-۹) and Arabic-Indic (٠-٩) digits and their separators to plain ASCII. */
+    static String normalizeDigits(String s) {
+        StringBuilder sb = new StringBuilder(s.length());
+        for (char c : s.toCharArray()) {
+            if (c >= '۰' && c <= '۹') {            // Persian digits
+                sb.append((char) ('0' + (c - '۰')));
+            } else if (c >= '٠' && c <= '٩') {     // Arabic-Indic digits
+                sb.append((char) ('0' + (c - '٠')));
+            } else if (c == '٫' || c == ',' || c == '،') {   // Arabic decimal sep., comma
+                sb.append('.');
+            } else if (c == '٬' || Character.isWhitespace(c)) {   // thousands separator, spaces
+                // dropped
+            } else {
+                sb.append(c);
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Converts ASCII digits and the decimal point to the digits of the given script:
+     * Persian (۰-۹) when persian is true, Arabic-Indic (٠-٩) otherwise. Decimal separator is ٫ in both.
+     */
+    static String toLocalDigits(String s, boolean persian) {
+        char zero = persian ? '۰' : '٠';
+        StringBuilder sb = new StringBuilder(s.length());
+        for (char c : s.toCharArray()) {
+            if (c >= '0' && c <= '9') {
+                sb.append((char) (zero + (c - '0')));
+            } else if (c == '.') {
+                sb.append('٫');
+            } else {
+                sb.append(c);
+            }
+        }
+        return sb.toString();
+    }
+
+    /** Text shown to the user: local digits for Farsi (Persian) and Arabic (Arabic-Indic), else unchanged. */
+    private String localizeDigits(String s) {
+        return currentLang.usesLocalDigits() ? toLocalDigits(s, currentLang.isFarsi()) : s;
+    }
+
+    /** Lets the user type only digits (any script), a decimal separator and a minus sign. */
+    private static TextFormatter<String> numericFormatter() {
+        UnaryOperator<TextFormatter.Change> filter = change -> {
+            String text = change.getText();
+            for (char c : text.toCharArray()) {
+                boolean ok = (c >= '0' && c <= '9')
+                        || (c >= '۰' && c <= '۹')
+                        || (c >= '٠' && c <= '٩')
+                        || c == '.' || c == ',' || c == '٫' || c == '،' || c == '-';
+                if (!ok) {
+                    return null;                              // reject the edit
+                }
+            }
+            return change;
+        };
+        return new TextFormatter<>(filter);
+    }
+
+    /** Parses a number typed in any supported digit script. */
+    private static double parseNumber(String text) {
+        return Double.parseDouble(normalizeDigits(text.trim()));
+    }
+
+    // ------------------------------------------------------------------- UI
+
     @Override
     public void start(Stage stage) {
         ComboBox<Lang> langBox = new ComboBox<>();
         langBox.getItems().addAll(LANGUAGES);
         langBox.setValue(LANGUAGES.get(0));
         langBox.setOnAction(e -> updateLanguage(langBox.getValue()));
+
+        distanceField.setTextFormatter(numericFormatter());
+        speedField.setTextFormatter(numericFormatter());
 
         calcButton.setOnAction(e -> calculate());
 
@@ -77,10 +158,6 @@ public class SVG_3012_javafx_V4_RTL_DB extends Application {
                 calcButton, resultLabel, messageLabel, dbLabel, historyLabel);
         root.setPadding(new Insets(20));
         root.setAlignment(Pos.CENTER_LEFT);
-
-        // keep numeric input left-to-right even in RTL languages
-        distanceField.setNodeOrientation(NodeOrientation.LEFT_TO_RIGHT);
-        speedField.setNodeOrientation(NodeOrientation.LEFT_TO_RIGHT);
 
         updateLanguage(LANGUAGES.get(0));
 
@@ -96,12 +173,32 @@ public class SVG_3012_javafx_V4_RTL_DB extends Application {
 
     private void updateLanguage(Lang lang) {
         currentLang = lang;
-        root.setNodeOrientation(lang.rtl() ? NodeOrientation.RIGHT_TO_LEFT : NodeOrientation.LEFT_TO_RIGHT);
+        NodeOrientation orientation = lang.rtl()
+                ? NodeOrientation.RIGHT_TO_LEFT : NodeOrientation.LEFT_TO_RIGHT;
+        root.setNodeOrientation(orientation);
+        // text fields follow the language direction, so Persian/Arabic numbers are typed right-to-left
+        distanceField.setNodeOrientation(orientation);
+        speedField.setNodeOrientation(orientation);
+
+        // re-write what is already typed into the digit script of the new language
+        convertFieldDigits(distanceField);
+        convertFieldDigits(speedField);
+
         rs = ResourceBundle.getBundle("Messages_bundle", lang.locale());
 
         resultLabel.setText("");
         messageLabel.setText("");
         refreshLocalizedTexts();
+    }
+
+    /** Shows existing input in Persian digits for Farsi and in Latin digits for the other languages. */
+    private void convertFieldDigits(TextField field) {
+        String text = field.getText();
+        if (text == null || text.isEmpty()) {
+            return;
+        }
+        String ascii = normalizeDigits(text);
+        field.setText(localizeDigits(ascii));
     }
 
     /** Reloads unit names from the database and rewrites every label in the current language. */
@@ -136,8 +233,8 @@ public class SVG_3012_javafx_V4_RTL_DB extends Application {
 
     private void calculate() {
         try {
-            double distance = Double.parseDouble(distanceField.getText().trim().replace(',', '.'));
-            double speed = Double.parseDouble(speedField.getText().trim().replace(',', '.'));
+            double distance = parseNumber(distanceField.getText());
+            double speed = parseNumber(speedField.getText());
 
             if (speed <= 0 || distance < 0) {
                 messageLabel.setText(msg("error.invalidInput"));
@@ -148,13 +245,14 @@ public class SVG_3012_javafx_V4_RTL_DB extends Application {
 
             // Localized result: numbers by locale, unit names from the database
             MessageFormat format = new MessageFormat(msg("calc.result"), currentLang.locale());
-            resultLabel.setText(format.format(new Object[]{
-                    distance, speed, time, unitName("KM"), unitName("KMH"), unitName("H")}));
+            resultLabel.setText(localizeDigits(format.format(new Object[]{
+                    distance, speed, time, unitName("KM"), unitName("KMH"), unitName("H")})));
 
             messageLabel.setText(rs.containsKey("message") ? rs.getString("message") : "");
 
             dbLabel.setText("");
             try {
+                // the database always receives plain numbers, whatever digits the user typed
                 dao.saveCalculation(distance, speed, time, currentLang.code(), "KM", "KMH");
                 dbLabel.setText(msg("db.saved"));
             } catch (SQLException e) {
@@ -173,8 +271,8 @@ public class SVG_3012_javafx_V4_RTL_DB extends Application {
         try {
             MessageFormat line = new MessageFormat(msg("history.row"), currentLang.locale());
             for (UnitDao.HistoryRow r : dao.lastCalculations(currentLang.code(), HISTORY_SIZE)) {
-                sb.append('\n').append(line.format(new Object[]{
-                        r.distance(), r.distanceUnit(), r.speed(), r.speedUnit(), r.timeHours()}));
+                sb.append('\n').append(localizeDigits(line.format(new Object[]{
+                        r.distance(), r.distanceUnit(), r.speed(), r.speedUnit(), r.timeHours()})));
             }
         } catch (SQLException e) {
             e.printStackTrace();

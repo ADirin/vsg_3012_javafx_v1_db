@@ -71,7 +71,7 @@
                         <configuration>
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>SVG_3012_javafx_V3_RtL</mainClass>
+                                    <mainClass>SVG_3012_javafx_V5_Rtl</mainClass>
                                 </transformer>
                             </transformers>
                         </configuration>
