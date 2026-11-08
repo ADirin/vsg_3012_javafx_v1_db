@@ -1,0 +1,2 @@
+C
+javaS106+Replace this use of System.err by a logger.2   

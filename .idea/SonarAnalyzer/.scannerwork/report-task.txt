@@ -1,0 +1,6 @@
+projectKey=SonarAnalyzer:vsg_3012_0tp2
+serverUrl=http://localhost:9000
+serverVersion=25.3.0.104237
+dashboardUrl=http://localhost:9000/dashboard?id=SonarAnalyzer%3Avsg_3012_0tp2
+ceTaskId=14657c6c-0e52-4a4f-b2c3-708bb6f802a0
+ceTaskUrl=http://localhost:9000/api/ce/task?id=14657c6c-0e52-4a4f-b2c3-708bb6f802a0
