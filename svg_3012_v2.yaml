@@ -1,0 +1,46 @@
+# 1. Database Credentials Secret
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mariadb-secret
+type: Opaque
+stringData:
+  mariadb-root-password: "Test12"
+  mariadb-database: "time_calculator"
+
+---
+# 2. JavaFX App Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: svg-3012-ls-v6  # Changed from svg_3012_ls_v6
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: svg-3012-ls-v6  # Changed from svg_3012_ls_v6
+  template:
+    metadata:
+      labels:
+        app: svg-3012-ls-v6  # Changed from svg_3012_ls_v6
+    spec:
+      containers:
+        - name: javafx-app
+          image: amirdirin/svg_3012_v2:latest
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: DB_HOST
+              value: "host.minikube.internal"
+            - name: DB_PORT
+              value: "3306"
+            - name: DB_NAME
+              value: "time_calculator"
+            - name: DB_USER
+              value: "root"
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mariadb-secret
+                  key: mariadb-root-password
+            - name: DISPLAY
+              value: "host.minikube.internal:0.0"
