@@ -2,5 +2,5 @@ projectKey=avgspd
 serverUrl=http://localhost:9000
 serverVersion=25.3.0.104237
 dashboardUrl=http://localhost:9000/dashboard?id=avgspd
-ceTaskId=b2d6eccf-b184-4ba5-a3a1-14466fd25271
-ceTaskUrl=http://localhost:9000/api/ce/task?id=b2d6eccf-b184-4ba5-a3a1-14466fd25271
+ceTaskId=1c7db205-c4e9-4a33-ab7b-fb03ad83384a
+ceTaskUrl=http://localhost:9000/api/ce/task?id=1c7db205-c4e9-4a33-ab7b-fb03ad83384a

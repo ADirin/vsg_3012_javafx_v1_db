@@ -15,7 +15,7 @@ RUN mkdir -p /javafx-sdk \
     && rm -rf /javafx-sdk/javafx-sdk-21 javafx.zip
 
 # Copy fat JAR
-COPY target/svg_3012_l10n_rtl.jar app.jar
+COPY target/svg_3012.jar app.jar
 
 # Set DISPLAY for Windows (Xming)
 ENV DISPLAY=host.docker.internal:0.0
